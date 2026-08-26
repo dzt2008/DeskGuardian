@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}导入课表 · DeskGuardian{% endblock %}
+{% block page %}import{% endblock %}
+{% block content %}
+<section class="hero compact-hero">
+  <div><p class="eyebrow">智能导入</p><h1>粘贴课表，确认后再入库</h1><p class="muted">支持普通文本、表格与 Markdown；AI 不可用时会自动降级为规则解析。</p></div>
+</section>
+
+<section class="panel stack">
+  <form id="parse-form">
+    <div class="field-row align-end">
+      <label class="field grow" for="schedule-text"><span>课表原文</span>
+        <textarea id="schedule-text" name="text" rows="9" required placeholder="示例：高等数学 周一 第1-2节 教学楼A101"></textarea>
+      </label>
+      <label class="field mode-field" for="parse-mode"><span>解析模式</span>
+        <select id="parse-mode" name="mode"><option value="auto">自动（推荐）</option><option value="ai">优先 AI</option><option value="rule">仅规则</option></select>
+      </label>
+    </div>
+    <div class="button-row">
+      <button id="parse-button" class="button" type="submit">开始解析</button>
+      <button id="clear-import" class="button ghost" type="button">清空重来</button>
+    </div>
+  </form>
+  <div id="parse-status" class="alert info hidden" role="status" aria-live="polite"></div>
+</section>
+
+<section id="preview-section" class="panel hidden" aria-labelledby="preview-title">
+  <div class="panel-heading wrap">
+    <div><p class="eyebrow">解析预览</p><h2 id="preview-title">检查识别结果</h2><p id="parse-meta" class="muted"></p></div>
+    <div class="button-row"><button id="add-preview-row" class="button secondary" type="button">新增一行</button><button id="confirm-import" class="button" type="button">确认导入所选</button></div>
+  </div>
+  <p class="table-hint">双击单元格即可编辑；星期填 1–7，节次填 1–8。</p>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th scope="col"><input id="select-all-preview" type="checkbox" checked aria-label="全选课程"></th><th scope="col">课程名</th><th scope="col">星期</th><th scope="col">开始节次</th><th scope="col">结束节次</th><th scope="col">教室</th><th scope="col">操作</th></tr></thead>
+      <tbody id="preview-body"></tbody>
+    </table>
+  </div>
+  <p id="preview-empty" class="empty-state hidden">没有识别到课程。你可以新增一行手工录入。</p>
+</section>
+{% endblock %}

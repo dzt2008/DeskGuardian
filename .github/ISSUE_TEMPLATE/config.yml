@@ -1,0 +1,4 @@
+# 不提供公开的通用空白 Issue，避免安全问题或含个人数据的内容误发。
+# 仓库启用 Private Vulnerability Reporting 后，GitHub 会在 Security 页面提供
+# 真实的私密入口；这里不虚构仓库 URL、邮箱或外部安全渠道。
+blank_issues_enabled: false

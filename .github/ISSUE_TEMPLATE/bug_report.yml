@@ -1,0 +1,112 @@
+name: 缺陷报告
+
+description: 报告可复现的 DeskGuardian 功能错误；安全漏洞请勿使用此表单。
+
+title: "[Bug] "
+
+labels:
+  - bug
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢你帮助改进 DeskGuardian。提交前请搜索现有 Issue，并使用虚构课表或脱敏数据复现。
+
+        如果问题可能导致未授权访问、数据泄露、代码执行或其他安全影响，请停止填写公开表单，改按 `SECURITY.md` 私密报告。
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: 提交前确认
+      options:
+        - label: 我已搜索现有 Issue，未发现相同问题。
+          required: true
+        - label: 这不是安全漏洞；若可能是漏洞，我会按 SECURITY.md 私密报告。
+          required: true
+        - label: 我已删除真实课表、作业、数据库、导出文件、凭据、私有地址和其他个人信息。
+          required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: DeskGuardian 版本或提交
+      description: 填写发布版本、提交哈希，或说明来自源码的日期。
+      placeholder: 例如：0.1.0；或提交哈希
+    validations:
+      required: true
+
+  - type: dropdown
+    id: installation
+    attributes:
+      label: 安装方式
+      options:
+        - 源码与虚拟环境
+        - PyInstaller 可执行文件
+        - Docker
+        - 其他
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: 运行环境
+      description: 操作系统及版本、Python 版本；不适用项请写“不适用”。
+      placeholder: 例如：Windows 11，Python 3.11.9
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: 问题描述
+      description: 清楚说明发生了什么，以及它如何影响使用。
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: 最小复现步骤
+      description: 使用虚构数据，给出可以重复执行的编号步骤。
+      placeholder: |
+        1. 设置 DESKGUARDIAN_DATA_DIR 为临时目录
+        2. 运行……
+        3. 输入虚构数据……
+        4. 观察到……
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 预期行为
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: 实际行为
+      description: 可粘贴已脱敏的错误文本。上传截图前请遮盖姓名、路径、IP、课程和日程。
+    validations:
+      required: true
+
+  - type: dropdown
+    id: ollama
+    attributes:
+      label: Ollama 情况
+      options:
+        - 未启用或与问题无关
+        - 本机 Ollama
+        - 远程 Ollama
+        - 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: 补充信息
+      description: 可填写回归版本、已尝试的解决方法或已脱敏日志；不要上传整个数据库或配置目录。

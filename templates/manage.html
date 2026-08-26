@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}管理数据 · DeskGuardian{% endblock %}
+{% block page %}manage{% endblock %}
+{% block content %}
+<section class="hero compact-hero"><div><p class="eyebrow">数据中心</p><h1>管理课程、作业与设置</h1><p class="muted">所有修改直接保存到本地数据库。</p></div></section>
+
+<div class="tabs" role="tablist" aria-label="管理分类">
+  <button class="tab active" role="tab" aria-selected="true" aria-controls="courses-panel" id="courses-tab" data-tab="courses-panel">课程</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="homeworks-panel" id="homeworks-tab" data-tab="homeworks-panel">作业</button>
+  <button class="tab" role="tab" aria-selected="false" aria-controls="settings-panel" id="settings-tab" data-tab="settings-panel">设置与数据</button>
+</div>
+
+<section id="courses-panel" class="panel tab-panel" role="tabpanel" aria-labelledby="courses-tab">
+  <div class="panel-heading wrap"><div><h2>课程</h2><p class="muted">按星期与名称快速定位课程。</p></div><button class="button" type="button" data-open-dialog="course-dialog">新增课程</button></div>
+  <div class="filters"><label class="field"><span>星期筛选</span><select id="course-weekday-filter"><option value="">全部星期</option><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option><option value="7">星期日</option></select></label><label class="field grow"><span>搜索课程</span><input id="course-search" type="search" placeholder="输入课程名或教室"></label></div>
+  <div class="table-scroll"><table><thead><tr><th>课程名</th><th>星期</th><th>节次</th><th>教室</th><th>启用</th><th>操作</th></tr></thead><tbody id="courses-body"></tbody></table></div>
+  <p id="courses-empty" class="empty-state hidden">没有符合条件的课程。</p>
+</section>
+
+<section id="homeworks-panel" class="panel tab-panel hidden" role="tabpanel" aria-labelledby="homeworks-tab">
+  <div class="panel-heading wrap"><div><h2>作业</h2><p class="muted">维护作业内容与截止时间。</p></div><button class="button" type="button" data-open-dialog="homework-dialog">新增作业</button></div>
+  <div class="table-scroll"><table><thead><tr><th>科目</th><th>作业内容</th><th>截止时间</th><th>提醒状态</th><th>操作</th></tr></thead><tbody id="homeworks-body"></tbody></table></div>
+  <p id="homeworks-empty" class="empty-state hidden">暂无作业。</p>
+</section>
+
+<section id="settings-panel" class="panel tab-panel hidden" role="tabpanel" aria-labelledby="settings-tab">
+  <div class="settings-grid">
+    <form id="settings-form" class="subpanel stack"><div><h2>提醒设置</h2><p class="muted">保存后由后台调度器使用。请按学校实际作息修改节次时间。</p></div><label class="field"><span>课程提前提醒（分钟）</span><input id="reminder-minutes" name="reminder_minutes" type="number" min="0" max="1440" required></label><fieldset class="section-time-fieldset"><legend>第 1～8 节时间</legend><div id="section-times-grid" class="section-times-grid"></div></fieldset><label class="check-row"><input id="autostart" name="autostart" type="checkbox"><span>开机自动启动 DeskGuardian</span></label><button class="button" type="submit">保存设置</button><button id="settings-test-notification" class="button secondary" type="button">发送测试提醒</button></form>
+    <div class="subpanel stack"><div><h2>JSON 数据</h2><p class="muted">导出备份，或从备份文件恢复数据。</p></div><a id="export-json" class="button secondary" href="/api/export" download="deskguardian-backup.json">导出 JSON</a><label class="file-picker" for="json-file"><span>选择 JSON 文件</span><input id="json-file" type="file" accept="application/json,.json"></label><button id="import-json" class="button" type="button">导入 JSON</button><p class="small muted">导入可能覆盖或合并现有数据，请确认备份来源可靠。</p></div>
+  </div>
+</section>
+
+<dialog id="course-dialog"><form id="course-form" class="dialog-form"><div class="dialog-heading"><h2 id="course-dialog-title">新增课程</h2><button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button></div><input id="course-id" type="hidden"><label class="field"><span>课程名</span><input id="course-name" required maxlength="100"></label><div class="field-row"><label class="field grow"><span>星期</span><select id="course-weekday" required><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option><option value="7">星期日</option></select></label><label class="field grow"><span>开始节次</span><input id="course-start" type="number" min="1" max="8" required></label><label class="field grow"><span>结束节次</span><input id="course-end" type="number" min="1" max="8" required></label></div><label class="field"><span>教室</span><input id="course-room" maxlength="100"></label><label class="check-row"><input id="course-active" type="checkbox" checked><span>启用课程提醒</span></label><div class="dialog-actions"><button class="button ghost" type="button" data-close-dialog>取消</button><button class="button" type="submit">保存</button></div></form></dialog>
+
+<dialog id="homework-dialog"><form id="homework-form" class="dialog-form"><div class="dialog-heading"><h2 id="homework-dialog-title">新增作业</h2><button class="icon-button" type="button" data-close-dialog aria-label="关闭">×</button></div><input id="homework-id" type="hidden"><label class="field"><span>科目</span><input id="homework-subject" required maxlength="100"></label><label class="field"><span>作业内容</span><textarea id="homework-content" rows="4" required maxlength="500"></textarea></label><label class="field"><span>截止日期（支持“后天”或 YYYY-MM-DD）</span><input id="homework-deadline" type="text" required placeholder="例如：后天 或 2026-09-01"></label><div class="dialog-actions"><button class="button ghost" type="button" data-close-dialog>取消</button><button class="button" type="submit">保存</button></div></form></dialog>
+{% endblock %}

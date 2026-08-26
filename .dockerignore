@@ -1,0 +1,56 @@
+# Version control and repository metadata
+.git
+.github
+.gitignore
+.gitattributes
+.editorconfig
+.pre-commit-config.yaml
+
+# Local environments, caches, tests, and coverage
+.venv
+venv
+env
+__pycache__
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.coverage
+.coverage.*
+htmlcov
+*.py[cod]
+
+# Build and packaging outputs
+build
+dist
+*.egg-info
+*.spec.bak
+
+# Editors and operating-system noise
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Runtime/user data and exports
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+*.log
+exports
+deskguardian-export*.json
+
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Project-only material not required in the runtime image
+11.md
+tests
+requirements-dev.txt
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+GOVERNANCE.md
+SECURITY.md
+CHANGELOG.md

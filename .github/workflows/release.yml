@@ -1,0 +1,135 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing v-prefixed tag to validate and package
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  RELEASE_TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+jobs:
+  validate:
+    name: Validate release metadata
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate tag, version.py, and CHANGELOG
+        run: python scripts/release_smoke.py validate "${RELEASE_TAG}"
+
+  build:
+    name: Build (${{ matrix.label }})
+    needs: validate
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            label: Windows x86_64
+            executable: dist/deskguardian.exe
+          - os: ubuntu-latest
+            label: Linux x86_64
+            executable: dist/deskguardian
+          - os: macos-13
+            label: macOS
+            executable: dist/deskguardian
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install build dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements-dev.txt
+
+      - name: Build native executable
+        run: python -m PyInstaller --clean --noconfirm deskguardian.spec
+
+      - name: Smoke-test native executable
+        run: python scripts/release_smoke.py smoke "${{ matrix.executable }}" --timeout 45
+
+      - name: Package release asset and SHA256
+        run: python scripts/release_smoke.py package "${{ matrix.executable }}" --output-dir release-assets
+
+      - name: Upload release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-${{ matrix.os }}
+          path: release-assets/*
+          if-no-files-found: error
+          retention-days: 7
+
+  release:
+    name: Create draft release
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout tagged source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.RELEASE_TAG }}
+
+      - name: Download native assets
+        uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+
+      - name: Ensure notices are release assets
+        run: cp LICENSE THIRD_PARTY_NOTICES.md README.md release-assets/
+
+      - name: Create or update draft GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh release view "${RELEASE_TAG}" >/dev/null 2>&1; then
+            gh release upload "${RELEASE_TAG}" release-assets/* --clobber
+            gh release edit "${RELEASE_TAG}" \
+              --draft \
+              --title "DeskGuardian ${RELEASE_TAG}"
+          else
+            gh release create "${RELEASE_TAG}" \
+              release-assets/* \
+              --draft \
+              --verify-tag \
+              --title "DeskGuardian ${RELEASE_TAG}" \
+              --generate-notes
+          fi

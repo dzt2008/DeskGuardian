@@ -1,0 +1,42 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Packaging
+build/
+dist/
+*.egg-info/
+*.spec.bak
+
+# Editors and operating systems
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# DeskGuardian local/runtime data
+deskguardian.db
+deskguardian.db-*
+*.sqlite
+*.sqlite3
+# config.json is the non-secret distributable default; runtime copies live in
+# the per-user data directory rather than this repository.
+*.log
+exports/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="deskguardian-csrf-token" content="{{ csrf_token }}">
+  <title>{% block title %}DeskGuardian{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  {% block head %}{% endblock %}
+</head>
+<body data-page="{% block page %}{% endblock %}">
+  <a class="skip-link" href="#main-content">跳到主要内容</a>
+  <header class="site-header">
+    <div class="nav-wrap">
+      <a class="brand" href="/" aria-label="DeskGuardian 首页">
+        <span class="brand-mark" aria-hidden="true">DG</span>
+        <span><strong>DeskGuardian</strong><small>本地课业守护助手</small></span>
+      </a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="main-nav">菜单</button>
+      <nav id="main-nav" class="main-nav" aria-label="主导航">
+        <a href="/" data-nav="today">今日概览</a>
+        <a href="/import" data-nav="import">导入课表</a>
+        <a href="/manage" data-nav="manage">管理数据</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main-content" class="page-shell" tabindex="-1">
+    {% block content %}{% endblock %}
+  </main>
+
+  <div id="toast-region" class="toast-region" role="status" aria-live="polite" aria-atomic="true"></div>
+  <footer class="site-footer">数据保存在本机 · DeskGuardian</footer>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

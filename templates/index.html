@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}今日概览 · DeskGuardian{% endblock %}
+{% block page %}today{% endblock %}
+{% block content %}
+<section class="hero compact-hero">
+  <div>
+    <p class="eyebrow">今日安排</p>
+    <h1 id="today-heading">正在加载今天的安排…</h1>
+    <p class="muted" id="today-summary">课程与近期截止作业会显示在这里。</p>
+  </div>
+  <button id="test-notification" class="button secondary" type="button">发送测试提醒</button>
+</section>
+
+<div id="today-error" class="alert error hidden" role="alert"></div>
+<section class="dashboard-grid" aria-labelledby="today-heading">
+  <article class="panel">
+    <div class="panel-heading">
+      <div><p class="eyebrow">Course timeline</p><h2>今日课程</h2></div>
+      <span id="course-count" class="count-badge">0</span>
+    </div>
+    <div id="today-courses" class="timeline" aria-live="polite">
+      <div class="skeleton">正在加载课程…</div>
+    </div>
+  </article>
+
+  <article class="panel">
+    <div class="panel-heading">
+      <div><p class="eyebrow">Due soon</p><h2>3 天内截止</h2></div>
+      <span id="homework-count" class="count-badge danger">0</span>
+    </div>
+    <div id="today-homeworks" class="card-list" aria-live="polite">
+      <div class="skeleton">正在加载作业…</div>
+    </div>
+  </article>
+</section>
+
+<section class="quick-actions panel" aria-label="快捷操作">
+  <div><h2>接下来做什么？</h2><p class="muted">导入新课表，或在管理后台维护课程与作业。</p></div>
+  <div class="button-row"><a class="button" href="/import">导入课表</a><a class="button secondary" href="/manage">管理数据</a></div>
+</section>
+{% endblock %}
